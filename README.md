@@ -1,29 +1,61 @@
-# Data Warehouse Analytics (SQL Reporting) 📊
+# 📊 Data Warehouse Analytics & Advanced SQL Reporting
 
 ## 📌 Project Overview
-This project demonstrates advanced **SQL Querying** skills to extract actionable business insights from a data warehouse.
+This project demonstrates advanced **SQL Analytics Engineering** skills by transforming raw data from a **Data Warehouse (Gold Layer)** into actionable business insights.
 
-As a Data Analyst, my focus was to explore the `Gold` schema (pre-processed data), validate data quality, and generate consolidated reports for stakeholders without relying on visualization tools.
+The script goes beyond simple data extraction; it builds **reusable analytical assets (SQL Views)** that automate the calculation of complex metrics like **Customer Lifecycle**, **Product Performance**, and **RFM-based Segmentation**.
 
-## 🛠 Analyst Skills Demonstrated
-* **Complex Data Extraction:** Writing optimized T-SQL queries to answer specific business questions.
-* **Data Profiling:** Investigating data quality, date ranges, and column distributions to ensure accuracy.
-* **Aggregated Reporting:** Creating unified KPI views using `UNION ALL` to summarize Sales, Orders, and Customer metrics in one output.
-* **Advanced Ranking:** utilizing Window Functions (`TOP N`, `ORDER BY`) to identify:
-    * Best & Worst performing products.
-    * High-value customers (Pareto Principle).
+## 🛠️ Technical Skills Demonstrated
+* **Advanced SQL Scripting:** Utilization of **CTEs (Common Table Expressions)** to structure complex queries and perform multi-step aggregations.
+* **Business Logic Implementation:** translating business rules into SQL `CASE` statements to segment customers (VIP vs. Regular) and products (High vs. Low Performers).
+* **Data Profiling:** Investigating data quality, date ranges, and distribution before analysis.
+* **Metric Engineering:** Calculating advanced KPIs such as **Average Order Value (AOV)**, **Recency**, **Lifespan**, and **Avg Monthly Spend**.
+* **View Creation:** Designing persistent views (`gold.report_customers`, `gold.product_Report`) to serve as a clean data source for BI tools (Power BI / Tableau).
 
-## 📊 Key Insights Extracted
-* **Revenue Drivers:** Identified the top 5 products contributing to the majority of sales.
-* **Customer Behavior:** Segmented customers based on order frequency and purchase volume.
-* **Market Trends:** Analyzed sales performance across different countries and product categories.
+## 📂 Project Structure & Analysis Workflow
 
-## 📂 Project Structure
-* **`Advanced_Business_Reporting.sql`**: The script containing the analysis logic, organized into:
-    1.  **Exploratory Analysis:** Understanding the dataset.
-    2.  **KPI Calculation:** High-level metrics.
-    3.  **Deep-Dive Analysis:** Detailed performance reports.
+### 1. Database Exploration & Profiling
+* **Objective:** Understand the dataset structure and quality.
+* **Actions:** Checked schema metadata, calculated date ranges (Sales Duration), and analyzed customer age distribution.
+
+### 2. Consolidated KPI Reporting
+* **Objective:** Create a "One-View" summary of the business.
+* **Technique:** Used `UNION ALL` to aggregate disparate metrics (Total Sales, Orders, Quantity, Customers) into a single result set.
+
+### 3. Dimensional Analysis
+* **Objective:** Breakdown performance by key business dimensions.
+* **Insights:** Analyzed Sales by **Country**, **Category**, and **Gender**.
+
+### 4. Advanced Ranking
+* **Objective:** Identify the best and worst performers.
+* **Technique:** Used `TOP (N)` with `ORDER BY` to find the top revenue-generating products and customers.
+
+### 5. Analytical Views (The Core Intelligence) 🧠
+This is the most advanced part of the project, where raw data is transformed into analytical models.
+
+#### 👤 Customer Report View (`gold.report_customers`)
+A 360-degree view of the customer, including:
+* **Demographics:** Calculated `Age` and grouped customers into `Age Groups`.
+* **Segmentation Logic:**
+    * **VIP:** Customers with 12+ months lifespan AND > $5,000 sales.
+    * **Regular:** Customers with 12+ months lifespan BUT <= $5,000 sales.
+    * **New:** Customers with < 12 months lifespan.
+* **Advanced Metrics:** Calculated `Recency` (Months since last order) and `Average Monthly Spend`.
+
+#### 📦 Product Report View (`gold.product_Report`)
+A performance scorecard for every product, featuring:
+* **Performance Segmentation:** Classified products into **High-Performers**, **Mid-Range**, and **Low-Performers** based on revenue thresholds.
+* **Pricing Analysis:** Calculated `Avg Selling Price` handling division-by-zero errors.
+* **Sales Metrics:** `Average Order Revenue (AOR)` and `Product Lifespan`.
 
 ## 🚀 How to Use
-1.  Open the SQL file in any SQL editor (SSMS, Azure Data Studio).
-2.  Review the queries to see how raw data is transformed into business answers.
+1.  Open the SQL script `Data_Warehouse_Analytics.sql` in **SQL Server Management Studio (SSMS)**.
+2.  Execute the script sections sequentially to view the analysis.
+3.  To use the created reports, run the following queries after execution:
+    ```sql
+    -- Get all VIP Customers
+    SELECT * FROM gold.report_customers WHERE Customer_Segment = 'VIP';
+
+    -- Get High-Performing Products
+    SELECT * FROM gold.product_Report WHERE "Product Segment" = 'High-Performers';
+    ```
